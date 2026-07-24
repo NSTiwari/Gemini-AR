@@ -14,20 +14,6 @@ A mobile web app that turns a single photo into a real, camera-placed 3D object.
 4. That isolated image is sent to Hyper3D Rodin v2.5 (via fal.ai), which generates a textured 3D mesh in both GLB and USDZ formats.
 5. The mesh is rendered with `model-viewer`. Tapping "View in your room" launches a real AR session, WebXR on Android/Chrome or AR Quick Look on iOS/Safari, so the object appears anchored in your real room as you move the phone around.
 
-## Stack
-
-- Flask (Python) backend
-- Google Gemini API for image editing and object isolation
-- Hyper3D Rodin v2.5 via fal.ai for image-to-3D generation
-- `@google/model-viewer` for rendering the mesh and launching AR
-- WebXR Device API and ARCore for the actual in-browser AR session on Android
-- Vanilla JS and CSS on the frontend, no build step or framework
-
-## Architecture notes
-
-- 3D generation runs as an asynchronous job. The backend submits the generation request to fal.ai and returns immediately with a job id, and the frontend polls for completion every few seconds. This avoids holding one long HTTP connection open for the several minutes generation can take, which mobile networks and proxies tend to kill before it finishes.
-- Uploaded and generated images are written to `static/uploads/` and `static/outputs/` for the life of the process. There is no database.
-
 ## Setup
 
 ```
