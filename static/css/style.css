@@ -1,0 +1,298 @@
+:root {
+  --accent: #9bd8f0;
+  --accent-strong: #4fb8e0;
+  --ink: #1a1a1f;
+  --glass-bg: rgba(20, 18, 22, 0.42);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --sheet-bg: rgba(24, 20, 24, 0.72);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: #0d0c0f;
+  color: #fff;
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Stage (main content area) ---------- */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, #26222b 0%, #0d0c0f 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  padding: 0 40px;
+}
+.stage__empty p { margin: 0; font-size: 0.95rem; }
+
+.stage__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stage__ar {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  --poster-color: transparent;
+}
+
+.stage__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: rgba(10, 9, 11, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 0 32px;
+}
+.stage__loading p { margin: 0; font-size: 0.92rem; color: rgba(255, 255, 255, 0.85); }
+
+.loader {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.18);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.stage__error {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  z-index: 6;
+  background: rgba(60, 20, 24, 0.85);
+  border: 1px solid rgba(255, 120, 120, 0.4);
+  color: #ffd7d7;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.ar-cta {
+  position: absolute;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #0d2b3a;
+  border: none;
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Prompt overlay (bottom sheet) ---------- */
+
+.prompt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.prompt-overlay__sheet {
+  width: 100%;
+  background: var(--sheet-bg);
+  backdrop-filter: blur(18px) saturate(140%);
+  border-top: 1px solid var(--glass-border);
+  border-radius: 22px 22px 0 0;
+  padding: 20px 18px calc(20px + env(safe-area-inset-bottom));
+}
+
+.prompt-overlay__label {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+}
+
+.prompt-overlay__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#prompt-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  border-radius: 14px;
+  padding: 13px 14px;
+  font-size: 1rem;
+  outline: none;
+}
+#prompt-input::placeholder { color: rgba(255, 255, 255, 0.4); }
+#prompt-input:focus { border-color: var(--accent); }
+
+/* ---------- Nav bar (floating icon buttons) ---------- */
+
+.navbar {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 9px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  backdrop-filter: blur(16px) saturate(140%);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.navbar.is-collapsed .navbar__group {
+  opacity: 0;
+  transform: scale(0.85) translateX(6px);
+  pointer-events: none;
+}
+
+.navbar__handle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+.navbar.is-collapsed .navbar__handle { transform: rotate(180deg); }
+
+.navbar__btn, .icon-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  border: none;
+  background: var(--accent);
+  color: #0d2b3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+.navbar__btn:active, .icon-btn:active { background: var(--accent-strong); }
+.navbar__btn:disabled {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.35);
+  box-shadow: none;
+}
+
+.icon-btn--accent { border-radius: 12px; }
+
+/* Landscape hint: this app is portrait-first */
+@media (orientation: landscape) and (max-height: 500px) {
+  .app::after {
+    content: "Rotate your phone to portrait for the best experience";
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: #0d0c0f;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 40px;
+    font-size: 0.95rem;
+  }
+}
+
+/* ---------- Credit line ---------- */
+
+.header {
+  position: fixed;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.header__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+}
+
+.credit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.credit__logo {
+  height: 1em;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
